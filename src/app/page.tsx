@@ -3,6 +3,7 @@ import { TodoList } from '@/components/todo-list'
 import { CategorySection } from '@/components/category-section'
 import { getCategories, migrateToCategories } from './actions/todo'
 import { prisma } from '@/lib/prisma'
+import { ListTodo, Sparkles } from 'lucide-react'
 
 export default async function Home() {
   // デフォルトカテゴリの作成と既存TODOの移行
@@ -19,15 +20,21 @@ export default async function Home() {
   })
 
   return (
-    <main className="max-w-4xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-8">TODOアプリ</h1>
+    <main className="max-w-6xl mx-auto p-4 py-8">
+      <div className="flex items-center justify-center gap-3 mb-8">
+        <ListTodo className="w-8 h-8 text-purple-500" />
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
+          TODOリスト
+        </h1>
+        <Sparkles className="w-8 h-8 text-purple-500" />
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="md:col-span-2">
-          <div className="space-y-4">
+        <div className="md:col-span-2 space-y-6">
+          <div className="p-6 rounded-lg bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border-2 border-purple-200 dark:border-purple-800">
             <TodoInput categories={categories} />
-            <TodoList todos={todos} />
           </div>
+          <TodoList todos={todos} />
         </div>
         
         <CategorySection categories={categories} />
