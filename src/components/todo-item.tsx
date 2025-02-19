@@ -1,14 +1,9 @@
 'use client';
 
 import { Checkbox } from '@/components/ui/checkbox';
-import { deleteTodo, toggleTodo } from '@/app/actions';
+import { type Todo } from '@/app/actions';
+import { toggleTodoAction, deleteTodoAction } from '@/app/actions/todo';
 import { useToast } from '@/hooks/use-toast';
-
-interface Todo {
-  id: string;
-  text: string;
-  completed: boolean;
-}
 
 interface TodoItemProps {
   todo: Todo;
@@ -18,15 +13,31 @@ export function TodoItem({ todo }: TodoItemProps) {
   const { toast } = useToast();
 
   const handleToggle = async () => {
-    await toggleTodo(todo.id);
+    try {
+      await toggleTodoAction(todo.id, !todo.completed);
+    } catch (error) {
+      toast({
+        title: 'エラー',
+        description: '更新に失敗しました。',
+        variant: 'destructive'
+      });
+    }
   };
 
   const handleDelete = async () => {
-    await deleteTodo(todo.id);
-    toast({
-      title: '削除完了',
-      description: 'Todoが削除されました。'
-    });
+    try {
+      await deleteTodoAction(todo.id);
+      toast({
+        title: '削除完了',
+        description: 'Todoが削除されました。'
+      });
+    } catch (error) {
+      toast({
+        title: 'エラー',
+        description: '削除に失敗しました。',
+        variant: 'destructive'
+      });
+    }
   };
 
   return (

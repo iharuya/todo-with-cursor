@@ -3,7 +3,15 @@
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 
-export async function getTodos() {
+export type Todo = {
+  id: string
+  text: string
+  completed: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
+export async function getTodos(): Promise<Todo[]> {
   return await prisma.todo.findMany({
     orderBy: {
       createdAt: 'desc'
@@ -11,28 +19,22 @@ export async function getTodos() {
   })
 }
 
-export async function addTodo(text: string) {
+export async function addTodo(formData: FormData) {
+  const text = formData.get('text')
+  if (!text || typeof text !== 'string') return
+
   await prisma.todo.create({
-    data: {
-      text
-    }
+    data: { text }
   })
   revalidatePath('/')
 }
 
-export async function toggleTodo(id: string) {
-  const todo = await prisma.todo.findUnique({
-    where: { id }
+export async function toggleTodo(id: string, completed: boolean) {
+  await prisma.todo.update({
+    where: { id },
+    data: { completed }
   })
-  if (todo) {
-    await prisma.todo.update({
-      where: { id },
-      data: {
-        completed: !todo.completed
-      }
-    })
-    revalidatePath('/')
-  }
+  revalidatePath('/')
 }
 
 export async function deleteTodo(id: string) {
