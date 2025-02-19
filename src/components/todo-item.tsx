@@ -55,11 +55,23 @@ export function TodoItem({ todo }: TodoItemProps) {
       isDeleting && "opacity-50 pointer-events-none",
       todo.completed && "bg-gray-50/50 dark:bg-gray-900/50"
     )}>
-      <div className="flex items-center gap-3 flex-1 min-w-0">
+      <div 
+        className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer"
+        onClick={handleToggle}
+        tabIndex={0}
+        role="button"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleToggle();
+          }
+        }}
+      >
         <Checkbox 
           checked={todo.completed} 
           onCheckedChange={handleToggle}
           className="transition-all data-[state=checked]:bg-purple-500 data-[state=checked]:border-purple-500"
+          onClick={(e) => e.stopPropagation()}
         />
         <span className={cn(
           "flex-1 truncate transition-all duration-300",
@@ -70,12 +82,16 @@ export function TodoItem({ todo }: TodoItemProps) {
         </span>
       </div>
       
-      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
         <Button
           variant="ghost"
           size="icon"
-          onClick={handleDelete}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDelete();
+          }}
           className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/30"
+          aria-label="タスクを削除"
         >
           <Trash2 className="w-4 h-4" />
         </Button>
