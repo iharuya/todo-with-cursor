@@ -10,11 +10,12 @@ import { PlusCircle, Sparkles } from 'lucide-react';
 
 interface TodoInputProps {
   categories: Category[];
+  defaultCategoryId?: string;
 }
 
-export function TodoInput({ categories }: TodoInputProps) {
+export function TodoInput({ categories, defaultCategoryId }: TodoInputProps) {
   const [text, setText] = useState('');
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>();
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>(defaultCategoryId);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

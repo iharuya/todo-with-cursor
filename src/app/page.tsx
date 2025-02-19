@@ -1,13 +1,24 @@
 import { TodoInput } from '@/components/todo-input'
 import { TodoList } from '@/components/todo-list'
 import { CategorySection } from '@/components/category-section'
+import { CategoryFilter } from '@/components/category-filter'
 import { getCategories } from './actions/todo'
 import { prisma } from '@/lib/prisma'
 import { ListTodo, Sparkles } from 'lucide-react'
 
-export default async function Home() {
+interface HomeProps {
+  searchParams: Promise<{ category?: string }>
+}
+
+export default async function Home({ searchParams }: HomeProps) {
+  const { category } = await searchParams
   const categories = await getCategories()
+  
+  // カテゴリでフィルタリングされたTODOを取得
   const todos = await prisma.todo.findMany({
+    where: category ? {
+      categoryId: category
+    } : undefined,
     include: {
       category: true,
     },
@@ -29,8 +40,12 @@ export default async function Home() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-6">
           <div className="p-6 rounded-lg bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border-2 border-purple-200 dark:border-purple-800">
-            <TodoInput categories={categories} />
+            <TodoInput 
+              categories={categories} 
+              defaultCategoryId={category}
+            />
           </div>
+          <CategoryFilter categories={categories} />
           <TodoList todos={todos} />
         </div>
         
