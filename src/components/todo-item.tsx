@@ -4,6 +4,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { type Todo } from '@/app/actions';
 import { toggleTodoAction, deleteTodoAction } from '@/app/actions/todo';
 import { useToast } from '@/hooks/use-toast';
+import { Trash2 } from 'lucide-react';
+import { Button } from './ui/button';
+import { cn } from '@/lib/utils';
+import { useState } from 'react';
 
 interface TodoItemProps {
   todo: Todo;
@@ -11,6 +15,7 @@ interface TodoItemProps {
 
 export function TodoItem({ todo }: TodoItemProps) {
   const { toast } = useToast();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleToggle = async () => {
     try {
@@ -26,10 +31,11 @@ export function TodoItem({ todo }: TodoItemProps) {
 
   const handleDelete = async () => {
     try {
+      setIsDeleting(true);
       await deleteTodoAction(todo.id);
       toast({
         title: '削除完了',
-        description: 'Todoが削除されました。'
+        description: 'タスクを削除しました'
       });
     } catch (error) {
       toast({
@@ -37,21 +43,43 @@ export function TodoItem({ todo }: TodoItemProps) {
         description: '削除に失敗しました。',
         variant: 'destructive'
       });
+      setIsDeleting(false);
     }
   };
 
   return (
-    <div className="flex items-center space-x-2">
-      <Checkbox checked={todo.completed} onCheckedChange={handleToggle} />
-      <span className={todo.completed ? 'line-through text-gray-500' : ''}>
-        {todo.text}
-      </span>
-      <button
-        onClick={handleDelete}
-        className="ml-auto text-red-500 hover:text-red-700"
-      >
-        削除
-      </button>
+    <div className={cn(
+      "group flex items-center gap-3 p-3 rounded-lg transition-all duration-300",
+      "hover:bg-white/30 dark:hover:bg-gray-800/30 backdrop-blur-sm",
+      "border-2 border-transparent hover:border-purple-200 dark:hover:border-purple-800",
+      isDeleting && "opacity-50 pointer-events-none",
+      todo.completed && "bg-gray-50/50 dark:bg-gray-900/50"
+    )}>
+      <div className="flex items-center gap-3 flex-1 min-w-0">
+        <Checkbox 
+          checked={todo.completed} 
+          onCheckedChange={handleToggle}
+          className="transition-all data-[state=checked]:bg-purple-500 data-[state=checked]:border-purple-500"
+        />
+        <span className={cn(
+          "flex-1 truncate transition-all duration-300",
+          todo.completed && "line-through text-gray-500",
+          "group-hover:text-purple-700 dark:group-hover:text-purple-300"
+        )}>
+          {todo.text}
+        </span>
+      </div>
+      
+      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleDelete}
+          className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/30"
+        >
+          <Trash2 className="w-4 h-4" />
+        </Button>
+      </div>
     </div>
   );
 } 
