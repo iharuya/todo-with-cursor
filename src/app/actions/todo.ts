@@ -45,7 +45,25 @@ export async function getCategories() {
   });
 }
 
+async function getOrCreateDefaultCategory() {
+  const defaultCategory = await prisma.category.upsert({
+    where: { name: 'デフォルト' },
+    update: {},
+    create: {
+      name: 'デフォルト',
+      color: '#808080',
+    },
+  });
+  return defaultCategory;
+}
+
 export async function createTodo(text: string, categoryId?: string) {
+  // カテゴリIDが指定されていない場合、デフォルトカテゴリを取得または作成
+  if (!categoryId) {
+    const defaultCategory = await getOrCreateDefaultCategory();
+    categoryId = defaultCategory.id;
+  }
+
   const todo = await prisma.todo.create({
     data: {
       text,
@@ -57,28 +75,4 @@ export async function createTodo(text: string, categoryId?: string) {
   });
   revalidatePath('/');
   return todo;
-}
-
-// デフォルトカテゴリの作成と既存TODOの移行
-export async function migrateToCategories() {
-  const defaultCategory = await prisma.category.upsert({
-    where: { name: 'デフォルト' },
-    update: {},
-    create: {
-      name: 'デフォルト',
-      color: '#808080', // グレー
-    },
-  });
-
-  // カテゴリが設定されていない全てのTODOを更新
-  await prisma.todo.updateMany({
-    where: {
-      categoryId: null,
-    },
-    data: {
-      categoryId: defaultCategory.id,
-    },
-  });
-
-  return defaultCategory;
 } 

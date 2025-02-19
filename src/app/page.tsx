@@ -1,14 +1,11 @@
 import { TodoInput } from '@/components/todo-input'
 import { TodoList } from '@/components/todo-list'
 import { CategorySection } from '@/components/category-section'
-import { getCategories, migrateToCategories } from './actions/todo'
+import { getCategories } from './actions/todo'
 import { prisma } from '@/lib/prisma'
 import { ListTodo, Sparkles } from 'lucide-react'
 
 export default async function Home() {
-  // デフォルトカテゴリの作成と既存TODOの移行
-  await migrateToCategories()
-  
   const categories = await getCategories()
   const todos = await prisma.todo.findMany({
     include: {
