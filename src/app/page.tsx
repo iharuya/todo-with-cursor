@@ -46,7 +46,7 @@ export default async function Home({ searchParams }: HomeProps) {
             />
           </div>
           <CategoryFilter categories={categories} />
-          <TodoList todos={todos} />
+          <TodoList todos={todos} categories={categories} />
         </div>
         
         <div className="hidden md:block">

@@ -128,4 +128,24 @@ export async function updateCategory(id: string, data: { name: string; color: st
 
   revalidatePath('/');
   return updated;
+}
+
+export async function updateTodo(id: string, data: { text: string; categoryId?: string }) {
+  if (id === undefined) {
+    throw new Error('Invalid input');
+  }
+
+  const updated = await prisma.todo.update({
+    where: { id },
+    data: {
+      text: data.text,
+      categoryId: data.categoryId,
+    },
+    include: {
+      category: true,
+    },
+  });
+
+  revalidatePath('/');
+  return updated;
 } 

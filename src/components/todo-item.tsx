@@ -1,20 +1,21 @@
 'use client';
 
 import { Checkbox } from '@/components/ui/checkbox';
-import { type Todo } from '@/app/actions';
+import { type Todo, type Category } from '@prisma/client';
 import { toggleTodoAction, deleteTodoAction } from '@/app/actions/todo';
 import { useToast } from '@/hooks/use-toast';
 import { Trash2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
-import { Category } from '@prisma/client';
+import { EditTodoDialog } from '@/components/edit-todo-dialog';
 
 interface TodoItemProps {
   todo: Todo & { category: Category | null };
+  categories: Category[];
 }
 
-export function TodoItem({ todo }: TodoItemProps) {
+export function TodoItem({ todo, categories }: TodoItemProps) {
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -95,6 +96,7 @@ export function TodoItem({ todo }: TodoItemProps) {
       </div>
       
       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
+        <EditTodoDialog todo={todo} categories={categories} />
         <Button
           variant="ghost"
           size="icon"
