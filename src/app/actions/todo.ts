@@ -103,4 +103,29 @@ export async function deleteCategory(id: string) {
   ]);
 
   revalidatePath('/');
+}
+
+export async function updateCategory(id: string, data: { name: string; color: string }) {
+  if (id === undefined) {
+    throw new Error('Invalid input');
+  }
+
+  // デフォルトカテゴリの名前は変更できないようにする
+  const category = await prisma.category.findUnique({
+    where: { id },
+  });
+  if (category?.name === 'デフォルト' && data.name !== 'デフォルト') {
+    throw new Error('デフォルトカテゴリの名前は変更できません');
+  }
+
+  const updated = await prisma.category.update({
+    where: { id },
+    data: {
+      name: data.name,
+      color: data.color,
+    },
+  });
+
+  revalidatePath('/');
+  return updated;
 } 

@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Palette, Plus, FolderKanban, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { EditCategoryDialog } from './edit-category-dialog';
 
 interface CategoryManagerProps {
   categories: Category[];
@@ -139,16 +140,19 @@ export function CategoryManager({
                 <span className="font-medium text-gray-700 dark:text-gray-300 flex-1">
                   {category.name}
                 </span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleDelete(category)}
-                  className={`h-8 w-8 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 
-                           ${category.name === 'デフォルト' ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  disabled={category.name === 'デフォルト'}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+                <div className="flex items-center gap-1">
+                  <EditCategoryDialog category={category} />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDelete(category)}
+                    className={`h-8 w-8 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 
+                             ${category.name === 'デフォルト' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={category.name === 'デフォルト'}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             ))}
           </div>
