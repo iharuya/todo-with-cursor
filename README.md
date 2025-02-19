@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Todo With Cursor
 
-## Getting Started
+モダンなUIとスムーズなUXを備えた、Next.js App RouterベースのTODOアプリケーション。
 
-First, run the development server:
+## 特徴
+
+- 🎨 美しいUI/UX
+  - Shadcn UIコンポーネント
+  - Tailwind CSSによるスタイリング
+  - レスポンシブデザイン
+  - ダークモード対応
+  - アニメーションとトランジション効果
+
+- 📋 TODOの管理機能
+  - TODOの作成、編集、削除
+  - 完了状態の切り替え
+  - カテゴリによる分類
+  - カテゴリフィルタリング
+
+- 🎨 カテゴリ管理機能
+  - カスタムカラーの設定
+  - カテゴリの作成、編集、削除
+  - デフォルトカテゴリの保護機能
+
+- ⚡ 最新技術スタック
+  - Next.js 15 (App Router)
+  - React 19
+  - TypeScript
+  - Prisma (SQLite)
+  - Radix UI
+  - Tailwind CSS
+
+## 開発環境のセットアップ
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# リポジトリのクローン
+git clone https://github.com/yourusername/todo-with-cursor.git
+cd todo-with-cursor
+
+# 依存関係のインストール
+pnpm install
+
+# Prismaの初期設定
+pnpm dlx prisma generate
+pnpm dlx prisma db push
+
+# 開発サーバーの起動
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 環境変数
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`.env`ファイルを作成し、以下の環境変数を設定してください：
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+DATABASE_URL="file:./dev.db"
+```
 
-## Learn More
+## 制作フロー
 
-To learn more about Next.js, take a look at the following resources:
+このプロジェクトは、Cursor IDEのAI Agentとの協働で開発されました：
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. AI Agentが以下を実装：
+   - プロジェクトの基本構造とセットアップ
+   - データベーススキーマの設計
+   - UIコンポーネントの実装
+   - サーバーアクションの実装
+   - スタイリングとアニメーション
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. 人間のエンジニアの貢献：
+   - 型定義の微調整とインポートエラーの修正
+   - 最終的な動作確認とテスト
 
-## Deploy on Vercel
+## ディレクトリ構造
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/
+├── app/
+│   ├── actions/
+│   │   └── todo.ts      # サーバーアクション
+│   ├── layout.tsx       # ルートレイアウト
+│   └── page.tsx         # メインページ
+├── components/
+│   ├── ui/              # 基本UIコンポーネント
+│   ├── todo-item.tsx    # TODOアイテムコンポーネント
+│   ├── todo-list.tsx    # TODOリストコンポーネント
+│   └── ...             # その他のコンポーネント
+├── lib/
+│   └── prisma.ts        # Prismaクライアント
+└── types/               # 型定義
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ライセンス
+
+MIT
+
+## 作者
+
+- AI Agent (Cursor IDE) - メイン実装
+- あなたの名前 - プロジェクトオーナー、デバッグ
