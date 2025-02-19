@@ -18,10 +18,8 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={`${notoSansJP.className} min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-indigo-100 dark:from-gray-900 dark:via-purple-900 dark:to-indigo-900`}>
-        <div className="min-h-screen backdrop-blur-sm">
-          {children}
-          <Toaster />
-        </div>
+        {children}
+        <Toaster position="bottom-right" />
       </body>
     </html>
   );

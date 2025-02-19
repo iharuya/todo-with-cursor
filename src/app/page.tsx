@@ -49,7 +49,11 @@ export default async function Home({ searchParams }: HomeProps) {
           <TodoList todos={todos} />
         </div>
         
-        <CategorySection categories={categories} />
+        <div className="hidden md:block">
+          <div className="sticky top-4">
+            <CategorySection categories={categories} />
+          </div>
+        </div>
       </div>
     </main>
   )
