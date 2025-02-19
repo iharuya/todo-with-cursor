@@ -4,10 +4,11 @@ import { useState } from 'react';
 import { Category } from '@prisma/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { createCategory } from '@/app/actions/todo';
+import { createCategory, deleteCategory } from '@/app/actions/todo';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Palette, Plus, FolderKanban } from 'lucide-react';
+import { Palette, Plus, FolderKanban, Trash2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface CategoryManagerProps {
   categories: Category[];
@@ -18,13 +19,55 @@ export function CategoryManager({
 }: CategoryManagerProps) {
   const [name, setName] = useState('');
   const [color, setColor] = useState('#808080');
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
 
-    await createCategory(name, color);
-    setName('');
+    try {
+      await createCategory(name, color);
+      setName('');
+      toast({
+        title: "カテゴリを作成しました",
+        description: `"${name}"を作成しました。`,
+      });
+    } catch (error) {
+      toast({
+        title: "エラー",
+        description: "カテゴリの作成に失敗しました。",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDelete = async (category: Category) => {
+    if (category.name === 'デフォルト') {
+      toast({
+        title: "削除できません",
+        description: "デフォルトカテゴリは削除できません。",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!confirm(`カテゴリ"${category.name}"を削除しますか？\n※このカテゴリに属する全てのTODOも削除されます。`)) {
+      return;
+    }
+
+    try {
+      await deleteCategory(category.id);
+      toast({
+        title: "カテゴリを削除しました",
+        description: `"${category.name}"を削除しました。`,
+      });
+    } catch (error) {
+      toast({
+        title: "エラー",
+        description: "カテゴリの削除に失敗しました。",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -93,9 +136,19 @@ export function CategoryManager({
                   className="w-4 h-4 rounded-full ring-2 ring-purple-200 dark:ring-purple-800"
                   style={{ backgroundColor: category.color }}
                 />
-                <span className="font-medium text-gray-700 dark:text-gray-300">
+                <span className="font-medium text-gray-700 dark:text-gray-300 flex-1">
                   {category.name}
                 </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleDelete(category)}
+                  className={`h-8 w-8 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 
+                           ${category.name === 'デフォルト' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  disabled={category.name === 'デフォルト'}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
               </div>
             ))}
           </div>

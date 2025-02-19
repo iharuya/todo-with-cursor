@@ -75,4 +75,32 @@ export async function createTodo(text: string, categoryId?: string) {
   });
   revalidatePath('/');
   return todo;
+}
+
+export async function deleteCategory(id: string) {
+  if (id === undefined) {
+    throw new Error('Invalid input');
+  }
+
+  // デフォルトカテゴリは削除できないようにする
+  const category = await prisma.category.findUnique({
+    where: { id },
+  });
+  if (category?.name === 'デフォルト') {
+    throw new Error('デフォルトカテゴリは削除できません');
+  }
+
+  // トランザクションを使用して、カテゴリとそれに属するTODOを削除
+  await prisma.$transaction([
+    // このカテゴリに属するTODOを削除
+    prisma.todo.deleteMany({
+      where: { categoryId: id },
+    }),
+    // カテゴリを削除
+    prisma.category.delete({
+      where: { id },
+    }),
+  ]);
+
+  revalidatePath('/');
 } 
