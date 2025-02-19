@@ -8,9 +8,10 @@ import { Trash2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
+import { Category } from '@prisma/client';
 
 interface TodoItemProps {
-  todo: Todo;
+  todo: Todo & { category: Category | null };
 }
 
 export function TodoItem({ todo }: TodoItemProps) {
@@ -80,6 +81,17 @@ export function TodoItem({ todo }: TodoItemProps) {
         )}>
           {todo.text}
         </span>
+        {todo.category && (
+          <div
+            className="px-2 py-1 rounded text-sm"
+            style={{
+              backgroundColor: `${todo.category.color}20`,
+              color: todo.category.color,
+            }}
+          >
+            {todo.category.name}
+          </div>
+        )}
       </div>
       
       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">

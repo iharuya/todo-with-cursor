@@ -1,28 +1,37 @@
 import { TodoInput } from '@/components/todo-input'
 import { TodoList } from '@/components/todo-list'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Sparkles } from 'lucide-react'
+import { CategorySection } from '@/components/category-section'
+import { getCategories, migrateToCategories } from './actions/todo'
+import { prisma } from '@/lib/prisma'
 
-export default function Home() {
+export default async function Home() {
+  // デフォルトカテゴリの作成と既存TODOの移行
+  await migrateToCategories()
+  
+  const categories = await getCategories()
+  const todos = await prisma.todo.findMany({
+    include: {
+      category: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  })
+
   return (
-    <main className="container max-w-2xl mx-auto p-4 py-8 space-y-6">
-      <div className="flex items-center justify-center space-x-2 mb-8">
-        <Sparkles className="w-8 h-8 text-purple-500 animate-pulse" />
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
-          TODOリスト
-        </h1>
-        <Sparkles className="w-8 h-8 text-purple-500 animate-pulse" />
-      </div>
+    <main className="max-w-4xl mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-8">TODOアプリ</h1>
       
-      <Card className="border-2 border-purple-200 dark:border-purple-900 shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-center text-gray-700 dark:text-gray-200">今日のタスク</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <TodoInput />
-          <TodoList />
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="md:col-span-2">
+          <div className="space-y-4">
+            <TodoInput categories={categories} />
+            <TodoList todos={todos} />
+          </div>
+        </div>
+        
+        <CategorySection categories={categories} />
+      </div>
     </main>
   )
 }

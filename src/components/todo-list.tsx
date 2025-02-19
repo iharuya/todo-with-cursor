@@ -1,10 +1,13 @@
 import { getTodos } from '@/app/actions'
 import { TodoItem } from './todo-item'
 import { ClipboardList } from 'lucide-react'
+import { Todo, Category } from '@prisma/client'
 
-export async function TodoList() {
-  const todos = await getTodos()
+interface TodoListProps {
+  todos: (Todo & { category: Category | null })[]
+}
 
+export async function TodoList({ todos }: TodoListProps) {
   return (
     <div className="space-y-3">
       {todos.length === 0 ? (
